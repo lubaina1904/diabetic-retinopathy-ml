@@ -1,9 +1,16 @@
 #!/bin/bash
 
 # Helper script to run experiments in Docker
-# Usage: ./run_docker.sh [baseline|fedavg|fedprox|privacy|jupyter|bash]
+# Usage: ./scripts/run_docker.sh [baseline|fedavg|fedprox|privacy|jupyter|bash]
+# Or from project root: ./scripts/run_docker.sh [experiment]
 
 EXPERIMENT=${1:-baseline}
+
+# Get project root directory (parent of scripts/)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+cd "$PROJECT_ROOT"
 
 case $EXPERIMENT in
   baseline)

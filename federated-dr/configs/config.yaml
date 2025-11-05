@@ -1,0 +1,65 @@
+# Configuration file for Diabetic Retinopathy Federated Learning Project
+
+# Data paths (relative to project root)
+data:
+  csv_file: "data/aptos/train.csv"
+  img_dir: "data/aptos/train_images"
+  val_split: 0.2
+
+# Model configuration
+model:
+  model_name: "efficientnet_b0"  # Options: efficientnet_b0, efficientnet_b1, resnet50, etc.
+  num_classes: 5
+  pretrained: true
+
+# Baseline (Centralized) Training
+baseline:
+  batch_size: 32
+  num_epochs: 20
+  learning_rate: 0.001
+  num_workers: 2
+  save_dir: "results/models/baseline"
+
+# FedAvg Configuration
+fedavg:
+  num_hospitals: 4
+  num_rounds: 30
+  local_epochs: 3
+  fraction_fit: 1.0
+  batch_size: 32
+  learning_rate: 0.001
+  num_workers: 2
+  save_dir: "results/models/fedavg"
+
+# FedProx Configuration
+fedprox:
+  num_hospitals: 4
+  num_rounds: 30
+  local_epochs: 3
+  fraction_fit: 1.0
+  batch_size: 32
+  learning_rate: 0.001
+  num_workers: 2
+  mu: 0.01  # Proximal term coefficient
+  save_dir: "results/models/fedprox"
+
+# Differential Privacy Configuration
+privacy:
+  batch_size: 32
+  num_epochs: 10
+  num_workers: 2
+  max_grad_norm: 1.0
+  target_epsilon: 10.0
+  save_dir: "results/models/dp"
+
+# Device configuration
+device:
+  use_cuda: true
+  num_gpus: 1
+
+# Logging
+logging:
+  log_dir: "results/logs"
+  save_figures: true
+  figure_dir: "results/figures"
+

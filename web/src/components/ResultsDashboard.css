@@ -1,0 +1,119 @@
+.results-section {
+  padding: 6rem 2rem;
+  background: var(--light-bg);
+}
+
+body.dark .results-section {
+  background: var(--dark-bg);
+}
+
+.results-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.metrics-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.metric-dashboard-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+body.dark .metric-dashboard-card {
+  background: var(--dark-card);
+  border-color: var(--border-dark);
+}
+
+.metric-dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.metric-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-icon-wrap svg {
+  width: 28px;
+  height: 28px;
+}
+
+.metric-value-large {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+body.dark .metric-value-large {
+  color: var(--text-light);
+}
+
+.metric-label-small {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.chart-card {
+  padding: 2rem;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+body.dark .chart-card {
+  background: var(--dark-card);
+  border-color: var(--border-dark);
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+
+body.dark .chart-title {
+  color: var(--text-light);
+}
+
+.loading-skeleton {
+  padding: 4rem;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .results-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}

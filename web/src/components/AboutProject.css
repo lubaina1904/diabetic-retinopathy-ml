@@ -1,0 +1,132 @@
+.about-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+}
+
+body.dark .about-section {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+}
+
+.about-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.about-text h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+  color: var(--text-dark);
+}
+
+body.dark .about-text h3 {
+  color: var(--text-light);
+}
+
+.about-text h3:first-child {
+  margin-top: 0;
+}
+
+.about-text p {
+  color: #64748b;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+body.dark .about-text p {
+  color: #94a3b8;
+}
+
+.about-text ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about-text li {
+  color: #64748b;
+  line-height: 2;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+body.dark .about-text li {
+  color: #94a3b8;
+}
+
+.about-text li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--primary-blue);
+  font-weight: bold;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.stat-box {
+  padding: 2rem;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+body.dark .stat-box {
+  background: var(--dark-card);
+  border-color: var(--border-dark);
+}
+
+.stat-box:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 40px rgba(37, 99, 235, 0.2);
+}
+
+.stat-box svg {
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+body.dark .stat-value {
+  color: var(--text-light);
+}
+
+.stat-label {
+  color: #64748b;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .about-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+}

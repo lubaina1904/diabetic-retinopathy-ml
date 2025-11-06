@@ -1,132 +1,104 @@
-# Federated Learning for Diabetic Retinopathy Classification
+# Federated Learning for Diabetic Retinopathy
 
-A comprehensive project comparing centralized and federated learning approaches for diabetic retinopathy classification using transfer learning.
+A comprehensive machine learning project that implements and compares centralized and federated learning approaches for diabetic retinopathy (DR) classification. This project addresses the critical challenge of training accurate medical AI models while preserving patient privacy and data sovereignty across multiple healthcare institutions.
 
-## Project Overview
+## Project Description
 
-This project implements and compares:
-- **Centralized Training (Baseline)**: Traditional approach where all data is pooled
-- **Federated Learning (FedAvg)**: Collaborative learning without data sharing
-- **FedProx**: Extension of FedAvg for non-IID data
-- **Differential Privacy**: Privacy-preserving training with Opacus
+Diabetic retinopathy is a leading cause of blindness worldwide, affecting millions of diabetic patients. Early detection through retinal image analysis can prevent vision loss, but training effective AI models requires large, diverse datasets. Traditional centralized learning approaches require pooling patient data from multiple hospitals, which raises serious privacy, regulatory, and ethical concerns.
 
-## Directory Structure
+This project demonstrates how **Federated Learning** enables multiple hospitals to collaboratively train a shared machine learning model without ever sharing their sensitive patient data. Each hospital trains on local data, and only model updates (not raw data) are shared with a central server for aggregation.
+
+### Key Features
+
+- **Privacy-Preserving Training**: Hospitals collaborate without sharing patient data
+- **Multiple Learning Approaches**: Compares centralized baseline, FedAvg, FedProx, and differential privacy
+- **Transfer Learning**: Uses EfficientNet for effective feature extraction from retinal images
+- **Non-IID Data Simulation**: Realistically models data distribution across different hospitals
+- **Interactive Web Demo**: Visual demonstration of federated learning concepts
+- **Production-Ready Code**: Modular, configurable, and well-documented implementation
+
+### Approaches Compared
+
+1. **Centralized Baseline**: Traditional approach where all data is pooled (privacy concerns)
+2. **FedAvg (Federated Averaging)**: Standard federated learning algorithm
+3. **FedProx**: Enhanced FedAvg for handling non-IID (non-identically distributed) data
+4. **Differential Privacy**: Adds mathematical privacy guarantees to federated learning
+
+This project serves as both a research tool for comparing learning paradigms and an educational resource for understanding privacy-preserving AI in healthcare.
+
+## What's Inside
+
+- Centralized baseline, FedAvg, FedProx, and Differential Privacy experiments
+- Notebooks for exploration and results
+- Minimal Docker workflow (single image, simple run commands)
+- React + Express web demo (optional)
+
+## Repository Layout
 
 ```
-federated-dr/
-│
-├── data/
-│   ├── aptos/
-│   │   ├── train_images/      # Training images (not in repo)
-│   │   ├── test_images/        # Test images (not in repo)
-│   │   └── train.csv           # Labels CSV
-│   └── processed/              # Processed data (if needed)
-│
-├── src/
-│   ├── __init__.py
-│   ├── dataset.py              # Data loading and preprocessing
-│   ├── model.py                # Neural network architecture
-│   ├── train.py                # Centralized training (baseline)
-│   ├── federated.py            # Federated learning implementation
-│   ├── client.py               # Flower client
-│   ├── server.py               # Flower server
-│   ├── privacy.py             # Differential privacy implementation
-│   └── utils.py                # Helper functions
-│
-├── experiments/
-│   ├── baseline.py             # Run centralized baseline
-│   ├── fedavg.py              # Run FedAvg
-│   ├── fedprox.py             # Run FedProx
-│   └── privacy.py             # Run DP experiments
-│
-├── notebooks/
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_baseline_training.ipynb
-│   └── 03_federated_results.ipynb
-│
-├── results/
-│   ├── models/                # Saved model checkpoints
-│   ├── logs/                  # Training logs
-│   └── figures/               # Plots and visualizations
-│
-├── configs/
-│   └── config.yaml            # Hyperparameters and settings
-│
-├── docker/                    # Docker documentation
-│   ├── DOCKER.md             # Detailed Docker guide
-│   └── QUICKSTART_DOCKER.md  # Quick reference
-│
-├── scripts/                   # Helper scripts
-│   └── run_docker.sh         # Docker experiment runner
-│
-├── Dockerfile                 # Main Dockerfile (GPU support)
-├── Dockerfile.cpu            # CPU-only Dockerfile
-├── docker-compose.yml        # Docker Compose configuration
-├── .dockerignore            # Docker ignore rules
+.
+├── src/                 # Core Python modules
+├── experiments/         # Entry-points for each experiment
+├── notebooks/           # Jupyter notebooks
+├── configs/             # YAML configs
+├── web/                 # Demo web app (frontend + backend)
+├── results/             # Outputs (created at runtime)
+├── Dockerfile           # Single, minimal image
 ├── requirements.txt
-├── setup.py
-└── README.md
+└── README.md            # You are here
 ```
 
-## Installation
+## Setup (Python)
 
-### Prerequisites
+Prereqs: Python 3.8+, optionally CUDA-enabled GPU
 
-- Python 3.8+
-- CUDA-capable GPU (recommended)
-- PyTorch 2.0+
-
-### Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/lubaina1904/diabetic-retinopathy-ml.git
-cd diabetic-retinopathy-ml/federated-dr
-```
-
-2. Create a virtual environment:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-Or install as a package:
-```bash
+# or
 pip install -e .
 ```
 
-## Docker Deployment
+## Data
 
-### Quick Start with Docker
+Place APTOS-style data under `data/aptos/`:
 
-The easiest way to run the project is using Docker. The project includes pre-built Docker configurations.
+```
+data/
+  aptos/
+    train.csv
+    train_images/
+      <id>.png|jpeg
+```
 
-#### Prerequisites
-- Docker installed (version 20.10+)
-- Docker Compose (optional, for easier management)
-- NVIDIA Docker (optional, for GPU support)
+Configure paths/hyperparams in `configs/config.yaml`.
 
-#### Build Docker Image
+## Run Experiments (Local Python)
 
 ```bash
+# Baseline (centralized)
+python experiments/baseline.py
+
+# Federated (FedAvg)
+python experiments/fedavg.py
+
+# FedProx
+python experiments/fedprox.py
+
+# Differential Privacy
+python experiments/privacy.py
+```
+
+## Minimal Docker
+
+Single image, single way to run. GPU is optional if available.
+
+```bash
+# Build
 docker build -t federated-dr:latest .
-```
 
-For CPU-only (no GPU):
-```bash
-docker build -f Dockerfile.cpu -t federated-dr:cpu .
-```
-
-#### Run Experiments in Docker
-
-**Using Docker Run:**
-```bash
-# Baseline experiment
+# Baseline
 docker run --rm \
   -v "$(pwd)/data:/app/data:ro" \
   -v "$(pwd)/results:/app/results" \
@@ -134,8 +106,8 @@ docker run --rm \
   federated-dr:latest \
   python experiments/baseline.py
 
-# FedAvg experiment
-docker run --rm \
+# With GPU (optional)
+docker run --rm --gpus all \
   -v "$(pwd)/data:/app/data:ro" \
   -v "$(pwd)/results:/app/results" \
   -v "$(pwd)/configs:/app/configs:ro" \
@@ -143,199 +115,61 @@ docker run --rm \
   python experiments/fedavg.py
 ```
 
-**Using Docker Compose (Recommended):**
+Jupyter (optional):
 ```bash
-# Start container
-docker-compose up -d
-
-# Run experiments
-docker-compose run --rm federated-dr python experiments/baseline.py
-docker-compose run --rm federated-dr python experiments/fedavg.py
-docker-compose run --rm federated-dr python experiments/fedprox.py
-docker-compose run --rm federated-dr python experiments/privacy.py
-
-# Access interactive shell
-docker-compose exec federated-dr bash
-
-# Start Jupyter notebook (port 8888)
-docker-compose up jupyter
-# Then open http://localhost:8888
-```
-
-**Using Helper Script:**
-```bash
-chmod +x scripts/run_docker.sh
-./scripts/run_docker.sh baseline
-./scripts/run_docker.sh fedavg
-./scripts/run_docker.sh fedprox
-./scripts/run_docker.sh privacy
-./scripts/run_docker.sh jupyter  # Start Jupyter
-./scripts/run_docker.sh bash     # Interactive shell
-```
-
-#### GPU Support
-
-If you have NVIDIA GPU and nvidia-docker installed:
-
-```bash
-# Build with GPU support (default)
-docker build -t federated-dr:latest .
-
-# Run with GPU
-docker run --rm --gpus all \
+docker run --rm -it -p 8888:8888 \
   -v "$(pwd)/data:/app/data:ro" \
   -v "$(pwd)/results:/app/results" \
   -v "$(pwd)/configs:/app/configs:ro" \
+  -v "$(pwd)/notebooks:/app/notebooks" \
   federated-dr:latest \
-  python experiments/baseline.py
+  jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root \
+    --NotebookApp.token='' --NotebookApp.password=''
 ```
 
-Uncomment the GPU section in `docker-compose.yml` for GPU support with compose.
+## Web Demo (Optional)
 
-#### Verify Docker Setup
+Frontend (Vite) on 5173, Backend (Express) on 3000.
 
 ```bash
-# Check Python version
-docker run --rm federated-dr:latest python --version
+# Backend
+cd web/server
+npm install
+npm start
 
-# Check PyTorch
-docker run --rm federated-dr:latest python -c "import torch; print(f'PyTorch: {torch.__version__}')"
-
-# Check CUDA (if GPU available)
-docker run --rm --gpus all federated-dr:latest python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}')"
+# Frontend (new terminal)
+cd web
+npm install
+npm run dev
 ```
 
-#### Docker Volume Mounts
+Open http://localhost:5173 and try the Live Demo (upload an image, pick a hospital, analyze).
 
-- `./data` → `/app/data` (read-only) - Contains your dataset
-- `./results` → `/app/results` - Persists training results and models
-- `./configs` → `/app/configs` (read-only) - Configuration files
+## Modules Overview
 
-For more detailed Docker documentation, see `docker/DOCKER.md`.
+- `src/dataset.py`: dataset + transforms
+- `src/model.py`: model factory and utilities
+- `src/train.py`: centralized training
+- `src/federated.py`: FL utilities and evaluation
+- `src/client.py`: Flower client
+- `src/server.py`: Flower strategy/server
+- `src/privacy.py`: Opacus integration
+- `src/utils.py`: common helpers
 
-## Data Setup
+## Troubleshooting
 
-1. Place your APTOS-style dataset in `data/aptos/`:
-   - `train.csv`: CSV with columns `id_code` and `diagnosis`
-   - `train_images/`: Directory with images named `{id_code}.png` or `{id_code}.jpeg`
+- CUDA OOM: lower batch size in `configs/config.yaml`
+- Data not found: verify `data/aptos/` paths
+- Docker permissions: `sudo chown -R $USER:$USER results/`
+- Check CUDA in container: `docker run --rm --gpus all federated-dr:latest python -c "import torch; print(torch.cuda.is_available())"`
 
-2. Update paths in `configs/config.yaml` if needed
+## License & Citation
 
-## Usage
-
-### Configuration
-
-Edit `configs/config.yaml` to customize:
-- Model architecture
-- Training hyperparameters
-- Federated learning settings
-- Data paths
-
-### Running Experiments
-
-#### 1. Baseline (Centralized Training)
-```bash
-python experiments/baseline.py
-```
-
-#### 2. Federated Learning (FedAvg)
-```bash
-python experiments/fedavg.py
-```
-
-#### 3. FedProx
-```bash
-python experiments/fedprox.py
-```
-
-#### 4. Differential Privacy
-```bash
-python experiments/privacy.py
-```
-
-### Using Jupyter Notebooks
-
-1. Start Jupyter:
-```bash
-jupyter notebook
-```
-
-2. Open notebooks in `notebooks/`:
-   - `01_data_exploration.ipynb`: Explore the dataset
-   - `02_baseline_training.ipynb`: Run baseline training
-   - `03_federated_results.ipynb`: Compare results
-
-## Module Documentation
-
-### `src/dataset.py`
-- `DiabeticRetinopathyDataset`: Custom PyTorch Dataset for DR images
-- `get_transforms()`: Image augmentation and normalization transforms
-
-### `src/model.py`
-- `DRClassifier`: Transfer learning model using EfficientNet
-- `create_model()`: Factory function to create models
-- `count_parameters()`: Count model parameters
-
-### `src/train.py`
-- `Trainer`: Centralized training class
-- `evaluate_model()`: Comprehensive model evaluation
-
-### `src/client.py`
-- `HospitalClient`: Flower client for federated learning
-- Implements local training and evaluation
-
-### `src/server.py`
-- `CustomFedAvg`: Custom Flower strategy with result tracking
-- Server-side aggregation logic
-
-### `src/federated.py`
-- `create_hospital_splits()`: Create non-IID hospital datasets
-- `evaluate_global_model()`: Evaluate federated model
-- `create_client_fn()`: Client factory for Flower simulation
-
-### `src/privacy.py`
-- `make_private()`: Wrap model with differential privacy
-- `get_privacy_spent()`: Get privacy budget (epsilon)
-
-### `src/utils.py`
-- `create_train_val_split()`: Dataset splitting
-- `get_dataloader()`: Create DataLoaders
-- `plot_training_history()`: Visualization utilities
-- `save_results()`: Save results to JSON
-
-## Results
-
-Results are saved in `results/`:
-- `models/`: Model checkpoints (`.pth` files)
-- `figures/`: Training curves and confusion matrices
-- `*.json`: Experiment results and metrics
-
-## Key Features
-
-- **Modular Design**: Clean separation of concerns
-- **Configurable**: YAML-based configuration
-- **Extensible**: Easy to add new FL algorithms
-- **Documented**: Comprehensive docstrings
-- **AI-Friendly**: Clear structure for AI understanding
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
-
-This project is intended for educational and research purposes.
-
-## Citation
-
-If you use this code, please cite:
+Educational and research purposes.
 
 ```bibtex
 @software{federated_dr,
-  title={Federated Learning for Diabetic Retinopathy Classification},
+  title={Federated Learning for Diabetic Retinopathy},
   author={Your Name},
   year={2025},
   url={https://github.com/lubaina1904/diabetic-retinopathy-ml}
@@ -344,43 +178,5 @@ If you use this code, please cite:
 
 ## Acknowledgments
 
-- APTOS dataset
-- PyTorch Image Models (timm)
-- Flower (Flwr) for federated learning
-- Opacus for differential privacy
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Import Errors**: Make sure you're in the project root and `src/` is in Python path
-2. **CUDA Out of Memory**: Reduce batch size in config
-3. **Data Not Found**: Check paths in `configs/config.yaml`
-4. **Flower Connection Issues**: Ensure all clients can connect to server
-
-### Docker Issues
-
-1. **Out of Memory in Docker**: Reduce batch size in `configs/config.yaml`
-2. **CUDA Not Available**: Check if nvidia-docker is installed and GPU is accessible
-3. **Permission Issues**: Fix ownership: `sudo chown -R $USER:$USER results/`
-4. **Platform Mismatch**: If on ARM Mac, Docker will use emulation (slower but works)
-5. **Data Not Found**: Ensure data directory structure matches:
-   ```
-   data/
-     aptos/
-       train.csv
-       train_images/
-         *.png or *.jpeg
-   ```
-
-### Getting Help
-
-- Check the documentation in each module
-- Review the example notebooks
-- Check Docker documentation in `docker/DOCKER.md`
-- Open an issue on GitHub
-
----
-
-**Note**: This project structure is optimized for AI understanding and easy navigation. Each module has clear responsibilities and well-documented interfaces.
+APTOS dataset, PyTorch/timm, Flower, Opacus.
 

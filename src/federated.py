@@ -1,8 +1,4 @@
-"""
-FEDERATED LEARNING MODULE
 
-This module provides high-level functions for running federated learning experiments.
-"""
 
 import torch
 import flwr as fl
@@ -15,46 +11,28 @@ from src.server import get_model_parameters, set_model_parameters, CustomFedAvg
 
 
 def create_hospital_splits(dataset, num_hospitals=4, random_seed=42):
-    """
-    Split data into "hospitals" with different distributions (non-IID)
-
-    This simulates real-world federated learning where each hospital
-    has different patient populations
-
-    Args:
-        dataset: Full dataset
-        num_hospitals: Number of hospitals to simulate
-        random_seed: For reproducibility
-
-    Returns:
-        List of datasets, one per hospital
-    """
+    
     from torch.utils.data import Subset
     from collections import defaultdict
     import numpy as np
 
-    # Get all labels
     if hasattr(dataset, 'labels_df'):
         all_labels = dataset.labels_df['diagnosis'].values
         all_indices = list(range(len(dataset)))
     else:
-        # It's a Subset
         all_labels = [dataset.dataset.labels_df.iloc[i]['diagnosis']
                      for i in dataset.indices]
         all_indices = dataset.indices
 
-    # Group indices by class
     class_indices = defaultdict(list)
     for idx, label in zip(all_indices, all_labels):
         class_indices[label].append(idx)
 
-    # Define distributions for each hospital
-    # These are intentionally different (non-IID)
     distributions = [
-        [0.40, 0.20, 0.20, 0.10, 0.10],  # Hospital 1: Mostly healthy
-        [0.20, 0.15, 0.15, 0.25, 0.25],  # Hospital 2: More severe cases
-        [0.30, 0.25, 0.20, 0.15, 0.10],  # Hospital 3: Balanced
-        [0.25, 0.25, 0.25, 0.15, 0.10],  # Hospital 4: Moderate
+        [0.40, 0.20, 0.20, 0.10, 0.10],  # H1: healthy
+        [0.20, 0.15, 0.15, 0.25, 0.25],  # H: More severe cases
+        [0.30, 0.25, 0.20, 0.15, 0.10],  # H3: Balanced
+        [0.25, 0.25, 0.25, 0.15, 0.10],  # H4: Moderate
     ]
 
     np.random.seed(random_seed)
@@ -64,7 +42,6 @@ def create_hospital_splits(dataset, num_hospitals=4, random_seed=42):
     for h_id, dist in enumerate(distributions[:num_hospitals]):
         hospital_indices = []
 
-        # Calculate samples per class for this hospital
         total_samples_per_hospital = len(all_indices) // num_hospitals
 
         for class_id, proportion in enumerate(dist):
@@ -79,7 +56,7 @@ def create_hospital_splits(dataset, num_hospitals=4, random_seed=42):
                 ).tolist()
                 hospital_indices.extend(sampled)
 
-                # Remove sampled indices so they're not reused
+                # Remove sampled indices so theyre not reused
                 for idx in sampled:
                     class_indices[class_id].remove(idx)
 
@@ -100,17 +77,7 @@ def create_hospital_splits(dataset, num_hospitals=4, random_seed=42):
 
 
 def evaluate_global_model(model, test_loader, device):
-    """
-    Evaluate global model on test set
     
-    Args:
-        model: PyTorch model
-        test_loader: DataLoader for test data
-        device: 'cuda' or 'cpu'
-        
-    Returns:
-        tuple: (Average loss, Accuracy)
-    """
     model.eval()
     model.to(device)
 
@@ -140,23 +107,12 @@ def create_client_fn(
     config: Dict,
     device: torch.device
 ) -> Callable:
-    """
-    Create client factory function for Flower simulation
     
-    Args:
-        hospital_train_datasets: List of training datasets per hospital
-        hospital_val_datasets: List of validation datasets per hospital
-        config: Configuration dictionary
-        device: PyTorch device
-        
-    Returns:
-        Callable: Client factory function
-    """
     def client_fn(cid: str) -> fl.client.Client:
         """Create a client for hospital with given ID"""
         client_id = int(cid)
 
-        # Get this hospital's data
+        # hospital's data
         train_data = hospital_train_datasets[client_id]
         val_data = hospital_val_datasets[client_id]
 

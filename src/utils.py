@@ -1,9 +1,3 @@
-"""
-UTILITY FUNCTIONS
-
-Helper functions used across the project
-"""
-
 import torch
 from torch.utils.data import DataLoader, Subset
 import numpy as np
@@ -15,17 +9,6 @@ import json
 
 
 def create_train_val_split(dataset, val_split=0.2, random_seed=42):
-    """
-    Split dataset into train and validation sets
-
-    Args:
-        dataset: PyTorch Dataset
-        val_split: Fraction for validation (0.2 = 20%)
-        random_seed: For reproducibility
-
-    Returns:
-        tuple: (train_dataset, val_dataset)
-    """
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     split = int(np.floor(val_split * dataset_size))
@@ -46,18 +29,6 @@ def create_train_val_split(dataset, val_split=0.2, random_seed=42):
 
 
 def get_dataloader(dataset, batch_size=32, shuffle=True, num_workers=2):
-    """
-    Create DataLoader
-
-    Args:
-        dataset: PyTorch Dataset
-        batch_size: Samples per batch
-        shuffle: Randomize order
-        num_workers: Parallel data loading workers
-
-    Returns:
-        DataLoader
-    """
     return DataLoader(
         dataset,
         batch_size=batch_size,
@@ -68,13 +39,6 @@ def get_dataloader(dataset, batch_size=32, shuffle=True, num_workers=2):
 
 
 def plot_training_history(history, save_path=None):
-    """
-    Plot training curves
-
-    Args:
-        history: Dictionary with training metrics
-        save_path: Where to save plot (optional)
-    """
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
     epochs = range(1, len(history['train_loss']) + 1)
@@ -114,14 +78,6 @@ def plot_training_history(history, save_path=None):
 
 
 def plot_confusion_matrix(y_true, y_pred, save_path=None):
-    """
-    Plot confusion matrix
-
-    Args:
-        y_true: True labels
-        y_pred: Predicted labels
-        save_path: Where to save plot (optional)
-    """
     cm = confusion_matrix(y_true, y_pred)
 
     plt.figure(figsize=(10, 8))
@@ -140,13 +96,6 @@ def plot_confusion_matrix(y_true, y_pred, save_path=None):
 
 
 def save_results(results, save_path):
-    """
-    Save results to JSON file
-
-    Args:
-        results: Dictionary with results
-        save_path: Path to save file
-    """
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
     with open(save_path, 'w') as f:
@@ -156,15 +105,6 @@ def save_results(results, save_path):
 
 
 def load_config(config_path):
-    """
-    Load configuration from YAML file
-    
-    Args:
-        config_path: Path to YAML config file
-        
-    Returns:
-        dict: Configuration dictionary
-    """
     import yaml
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)

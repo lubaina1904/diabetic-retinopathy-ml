@@ -1,6 +1,3 @@
-"""
-Setup script for Federated Learning Diabetic Retinopathy Project
-"""
 
 from setuptools import setup, find_packages
 

@@ -1,11 +1,3 @@
-"""
-PRIVACY EXPERIMENT - Differential Privacy
-
-This experiment trains models with differential privacy (DP) using Opacus.
-
-Usage:
-    python experiments/privacy.py
-"""
 
 import sys
 import os
@@ -17,7 +9,6 @@ from torch.utils.data import DataLoader
 from datetime import datetime
 import yaml
 
-# Import our modules
 from src.dataset import DiabeticRetinopathyDataset, get_transforms
 from src.model import create_model, count_parameters
 from src.privacy import make_private, get_privacy_spent, create_dp_optimizer
@@ -26,7 +17,6 @@ from tqdm import tqdm
 
 
 def load_config(config_path='../configs/config.yaml'):
-    """Load configuration"""
     config_path = os.path.join(os.path.dirname(__file__), config_path)
     if os.path.exists(config_path):
         with open(config_path, 'r') as f:
@@ -37,25 +27,9 @@ def load_config(config_path='../configs/config.yaml'):
 
 def train_dp_model(model, train_loader, val_loader, device, num_epochs, 
                    max_grad_norm=1.0, target_epsilon=10.0):
-    """
-    Train model with differential privacy
-    
-    Args:
-        model: PyTorch model
-        train_loader: Training DataLoader
-        val_loader: Validation DataLoader
-        device: PyTorch device
-        num_epochs: Number of epochs
-        max_grad_norm: Maximum gradient norm for clipping
-        target_epsilon: Target privacy budget
-        
-    Returns:
-        dict: Training history and privacy metrics
-    """
-    # Create optimizer
+ 
     optimizer = create_dp_optimizer(model, learning_rate=0.001)
     
-    # Wrap with differential privacy
     privacy_engine, model, optimizer = make_private(
         model=model,
         optimizer=optimizer,
@@ -75,7 +49,6 @@ def train_dp_model(model, train_loader, val_loader, device, num_epochs,
     }
     
     for epoch in range(num_epochs):
-        # Training
         model.train()
         train_loss = 0.0
         train_correct = 0
@@ -95,7 +68,6 @@ def train_dp_model(model, train_loader, val_loader, device, num_epochs,
             train_total += labels.size(0)
             train_correct += predicted.eq(labels).sum().item()
         
-        # Validation
         model.eval()
         val_loss = 0.0
         val_correct = 0
@@ -111,7 +83,6 @@ def train_dp_model(model, train_loader, val_loader, device, num_epochs,
                 val_total += labels.size(0)
                 val_correct += predicted.eq(labels).sum().item()
         
-        # Get privacy spent
         epsilon = get_privacy_spent(privacy_engine)
         
         train_acc = 100. * train_correct / train_total
@@ -129,14 +100,7 @@ def train_dp_model(model, train_loader, val_loader, device, num_epochs,
 
 
 def main():
-    """
-    Main privacy experiment
-    """
-    print("="*70)
-    print("PRIVACY EXPERIMENT - Differential Privacy")
-    print("="*70)
-
-    # Load config or use defaults
+    
     config_from_file = load_config()
     
     config = {
@@ -168,7 +132,6 @@ def main():
     for key, value in config.items():
         print("  {}: {}".format(key, value))
 
-    # Load data
     train_transform = get_transforms(mode='train')
     val_transform = get_transforms(mode='val')
 
@@ -199,18 +162,11 @@ def main():
         shuffle=False,
         num_workers=config['num_workers']
     )
-
-    # Create model
     model = create_model(
         model_name=config['model_name'],
         num_classes=config['num_classes'],
         pretrained=config['pretrained']
     )
-
-    # Train with DP
-    print("\n" + "="*70)
-    print("Training with Differential Privacy...")
-    print("="*70)
 
     start_time = datetime.now()
     history, privacy_engine = train_dp_model(
@@ -226,14 +182,10 @@ def main():
 
     final_epsilon = get_privacy_spent(privacy_engine)
     
-    print("\n" + "="*70)
-    print("PRIVACY RESULTS")
-    print("="*70)
     print(f"Final Privacy Budget (epsilon): {final_epsilon:.2f}")
     print(f"Target epsilon: {config['target_epsilon']}")
     print(f"Training time: {(end_time - start_time).total_seconds() / 60:.2f} minutes")
 
-    # Save results
     results = {
         'config': config,
         'history': history,

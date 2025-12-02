@@ -1,9 +1,3 @@
-"""
-PRIVACY MODULE - Differential Privacy Implementation
-
-This module provides differential privacy (DP) functionality using Opacus.
-"""
-
 import torch
 import torch.nn as nn
 from opacus import PrivacyEngine
@@ -20,22 +14,6 @@ def make_private(
     noise_multiplier: Optional[float] = None,
     epochs: int = 1
 ):
-    """
-    Wrap model and optimizer with differential privacy
-    
-    Args:
-        model: PyTorch model
-        optimizer: Optimizer
-        train_loader: DataLoader for training
-        max_grad_norm: Maximum gradient norm for clipping
-        target_epsilon: Target privacy budget (epsilon)
-        target_delta: Target delta (typically 1/number of samples)
-        noise_multiplier: Optional noise multiplier (if None, computed from epsilon)
-        epochs: Number of training epochs
-        
-    Returns:
-        tuple: (PrivacyEngine, model, optimizer)
-    """
     privacy_engine = PrivacyEngine()
     
     model, optimizer, train_loader = privacy_engine.make_private(
@@ -50,30 +28,11 @@ def make_private(
 
 
 def get_privacy_spent(privacy_engine: PrivacyEngine, delta: float = 1e-5):
-    """
-    Get privacy spent (epsilon) from privacy engine
-    
-    Args:
-        privacy_engine: Opacus PrivacyEngine
-        delta: Delta parameter
-        
-    Returns:
-        float: Epsilon (privacy budget spent)
-    """
+ 
     epsilon = privacy_engine.get_epsilon(delta)
     return epsilon
 
 
 def create_dp_optimizer(model: nn.Module, learning_rate: float = 0.001):
-    """
-    Create optimizer for differential privacy training
-    
-    Args:
-        model: PyTorch model
-        learning_rate: Learning rate
-        
-    Returns:
-        torch.optim.Optimizer: Optimizer
-    """
     return torch.optim.Adam(model.parameters(), lr=learning_rate)
 
